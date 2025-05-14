@@ -59,7 +59,10 @@ public class Lexer {
                 return new PunctuationMark(punctuationMark);
             }
             case '0' -> {
-                peek = ' ';
+                peek = (char) input.read();
+                if (Character.isDigit(peek)) {
+                    throw new RuntimeException("Syntax error: Invalid integer literal on line " + line);
+                }
                 return new IntegerLiteral(0);
             }
             // Integer literals cannot start with a 0 unless they are only 0
