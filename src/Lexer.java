@@ -2,18 +2,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.Hashtable;
 
-enum Tag {
-    INTEGER_LITERAL,
-    IDENTIFIER,
-    OPERATOR,
-    PUNCTUATION_MARK
-}
-class Token {
-    public final Tag tag;
-    public Token(Tag tag) {
-        this.tag = tag;
-    }
-}
 class IntegerLiteral extends Token {
     public final int value;
     public IntegerLiteral(int value) {
@@ -45,7 +33,7 @@ class PunctuationMark extends Token {
 public class Lexer {
     public int line = 1;
     private char peek = ' ';
-    private Hashtable<String, Token> symbolTable = new Hashtable<>();
+    private final Hashtable<String, Token> symbolTable = new Hashtable<>();
     InputStream input;
 
     public Lexer(InputStream input) {
@@ -53,17 +41,19 @@ public class Lexer {
     }
 
     public Token scan() throws IOException {
+        // Skip whitespaces and track line count
         for (;; peek = (char) input.read()) {
             if (!Character.isWhitespace(peek)) break;
             if (peek == '\n') line++;
         }
+        // Tokenize
         switch (peek) {
             case '=', '+', '-', '*' -> {
                 char operator = peek;
                 peek = ' ';
                 return new Operator(operator);
             }
-            case ';' -> {
+            case '(', ')', ';' -> {
                 char punctuationMark = peek;
                 peek = ' ';
                 return new PunctuationMark(punctuationMark);
@@ -72,6 +62,7 @@ public class Lexer {
                 peek = ' ';
                 return new IntegerLiteral(0);
             }
+            // Integer literals cannot start with a 0 unless they are only 0
             case '1', '2', '3', '4', '5', '6', '7', '8', '9' -> {
                 int value = 0;
                 do {
@@ -80,6 +71,7 @@ public class Lexer {
                 } while (Character.isDigit(peek));
                 return new IntegerLiteral(value);
             }
+            // Variable names must begin with a letter or underscore they end with empty space
             default -> {
                 if (Character.isLetter(peek) || peek == '_') {
                     StringBuilder sb = new StringBuilder();
