@@ -23,20 +23,20 @@ public class Parser {
     private void parseAssignment() throws IOException {
         // If an assignment doesn't begin with an identifier it is invalid
         if (!(current instanceof Identifier id)) {
-            throw new RuntimeException("Syntax error: identifier expected on line " + lexer.line);
+            throw new RuntimeException("Syntax error: identifier expected on line " + lexer.getLine());
         }
         String varName = id.lexeme;
         current = lexer.scan();
         // Assignments must contain an equals sign after the identifier
         if (!(current instanceof Operator op) || op.name != '=') {
-            throw new RuntimeException("Syntax error: '=' expected on line " + lexer.line);
+            throw new RuntimeException("Syntax error: '=' expected on line " + lexer.getLine());
         }
         current = lexer.scan();
         // The rest of the tokens must be evaluated to find the value
         int value = parseExp();
         // The assignment must end with a semicolon
         if (!(current instanceof PunctuationMark pm) || pm.name != ';') {
-            throw new RuntimeException("Syntax error: ';' expected on line " + lexer.line);
+            throw new RuntimeException("Syntax error: ';' expected on line " + lexer.getLine());
         }
         current = lexer.scan();
         variables.put(varName, value);
@@ -71,7 +71,7 @@ public class Parser {
             int value = parseExp();
             // Throw error if parenthesis aren't closed
             if (!(current instanceof PunctuationMark pm2) || pm2.name != ')') {
-                throw new RuntimeException("Syntax error: ') expected on line " + lexer.line);
+                throw new RuntimeException("Syntax error: ') expected on line " + lexer.getLine());
             }
             current = lexer.scan();
             return value;
@@ -94,11 +94,11 @@ public class Parser {
             String name = id.lexeme;
             current = lexer.scan();
             if (!variables.containsKey(name)) {
-                throw new RuntimeException("Uninitialized variable: " + name + " on line " + lexer.line);
+                throw new RuntimeException("Uninitialized variable: " + name + " on line " + lexer.getLine());
             }
             return variables.get(name);
         }
         // Throw an error for unexpected tokens for example ) without a preceding (
-        throw new RuntimeException("Syntax error: unexpected token on line " + lexer.line);
+        throw new RuntimeException("Syntax error: unexpected token on line " + lexer.getLine());
     }
 }

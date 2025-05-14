@@ -31,13 +31,17 @@ class PunctuationMark extends Token {
     }
 }
 public class Lexer {
-    public int line = 1;
+    private int line = 1;
     private char peek = ' ';
     private final Hashtable<String, Token> symbolTable = new Hashtable<>();
-    InputStream input;
+    private final InputStream input;
 
     public Lexer(InputStream input) {
         this.input = input;
+    }
+
+    public int getLine() {
+        return line;
     }
 
     public Token scan() throws IOException {
@@ -74,7 +78,7 @@ public class Lexer {
                 } while (Character.isDigit(peek));
                 return new IntegerLiteral(value);
             }
-            // Variable names must begin with a letter or underscore they end with empty space
+            // Variable names must begin with a letter or underscore, they end with empty space
             default -> {
                 if (Character.isLetter(peek) || peek == '_') {
                     StringBuilder sb = new StringBuilder();

@@ -5,7 +5,7 @@ import java.io.InputStream;
 public class Main {
     public static void main(String[] args) throws IOException {
         String test = """
-                x = 001;
+                x = 1011;
                 """;
         InputStream in = new ByteArrayInputStream(test.getBytes());
         Lexer lexer = new Lexer(in);
