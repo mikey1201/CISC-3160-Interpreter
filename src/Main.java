@@ -1,15 +1,18 @@
-import java.io.ByteArrayInputStream;
-import java.io.IOException;
-import java.io.InputStream;
+import java.io.*;
 
 public class Main {
-    public static void main(String[] args) throws IOException {
-        String test = """
-                x = 1011;
-                """;
-        InputStream in = new ByteArrayInputStream(test.getBytes());
-        Lexer lexer = new Lexer(in);
-        Parser parser = new Parser(lexer);
-        parser.parseProgram();
+    public static void main(String[] args) {
+        if (args.length != 1) {
+            System.out.println("Only one argument allowed.");
+            System.exit(1);
+        }
+        String filename = args[0];
+        try (FileInputStream input = new FileInputStream(filename)) {
+            Lexer lexer = new Lexer(input);
+            Parser parser = new Parser(lexer);
+            parser.parseProgram();
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
+        }
     }
 }
